@@ -1,0 +1,29 @@
+name: express-development-mode
+description: Express.js application is running in development mode, exposing detailed error messages and stack traces
+severity: medium
+tags: [express, nodejs, debug, disclosure, development]
+owasp_id: A05:2021
+cwe_id: CWE-489
+remediation: |
+  Set NODE_ENV=production before starting the application.
+  Use express-error-handler or a custom error handler to suppress stack traces.
+  Never deploy with NODE_ENV=development in production environments.
+
+request:
+  method: GET
+  paths:
+    - /
+    - /nonexistent-path-probe-12345
+
+match:
+  status: [200, 404, 500]
+  condition: or
+  words:
+    - "at Object.<anonymous>"
+    - "node_modules/express"
+    - "at Module._compile"
+    - "SyntaxError:"
+    - "ReferenceError:"
+    - "X-Powered-By: Express"
+  not_words:
+    - "production"

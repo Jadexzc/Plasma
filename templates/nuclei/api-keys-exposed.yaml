@@ -1,0 +1,28 @@
+name: api-keys-exposed
+description: API keys, tokens, or secrets are exposed in public-facing files or endpoints
+severity: critical
+tags: [exposure, api-key, secrets, credentials]
+owasp_id: A02:2021
+cwe_id: CWE-200
+remediation: Rotate all exposed credentials immediately. Store secrets in environment variables or secrets management systems (Vault, AWS Secrets Manager).
+
+request:
+  method: GET
+  paths:
+    - /config.js
+    - /config.json
+    - /app.config.js
+    - /settings.json
+    - /env.js
+    - /constants.js
+
+match:
+  status: [200]
+  condition: or
+  regex:
+    - "(?i)(api_key|apikey|api-key|secret|token|password)\\s*[:=]\\s*['\"][a-zA-Z0-9+/=_\\-]{16,}"
+  not_words:
+    - "<html"
+    - "placeholder"
+    - "YOUR_API_KEY"
+    - "REPLACE_ME"

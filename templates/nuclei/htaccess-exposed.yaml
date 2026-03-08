@@ -1,0 +1,25 @@
+name: htaccess-exposed
+description: Exposed .htaccess file reveals web server configuration, access control rules, and redirect logic
+severity: medium
+tags: [exposure, config, apache]
+owasp_id: A05:2021
+cwe_id: CWE-200
+remediation: Ensure .htaccess files are not directly readable. Configure Apache to deny access to dotfiles.
+
+request:
+  method: GET
+  paths:
+    - /.htaccess
+    - /.htpasswd
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - "Options"
+    - "RewriteEngine"
+    - "AuthType"
+    - "Require"
+    - "DirectoryIndex"
+  not_words:
+    - "<html"

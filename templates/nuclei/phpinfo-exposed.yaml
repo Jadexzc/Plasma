@@ -1,0 +1,18 @@
+name: phpinfo-exposed
+description: phpinfo() output exposes server configuration, PHP version, and environment variables
+severity: medium
+tags: [php, disclosure, config]
+owasp_id: A05:2021
+cwe_id: CWE-200
+
+request:
+  method: GET
+  path: /phpinfo.php
+
+match:
+  status: [200]
+  words:
+    - "phpinfo()"
+    - "PHP Version"
+
+remediation: Delete phpinfo.php from production servers

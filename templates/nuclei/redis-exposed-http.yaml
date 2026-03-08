@@ -1,0 +1,26 @@
+name: redis-http-proxy-exposed
+description: Redis commands accessible via HTTP proxy, potentially exposing cached data and allowing command injection
+severity: critical
+tags: [redis, cache, database, exposure]
+owasp_id: A05:2021
+cwe_id: CWE-306
+remediation: Never expose Redis via HTTP proxy. Bind Redis to 127.0.0.1. Enable requirepass authentication.
+
+request:
+  method: GET
+  paths:
+    - /redis?cmd=info
+    - /?cmd=info+server
+    - /redis/info
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - "redis_version:"
+    - "redis_mode:"
+    - "used_memory:"
+    - "connected_clients:"
+  not_words:
+    - "<html"
+    - "404"

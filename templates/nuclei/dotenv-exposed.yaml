@@ -1,0 +1,33 @@
+name: dotenv-exposed
+description: Exposed .env file contains application secrets, database credentials, or API keys
+severity: critical
+tags: [exposure, credentials, env, secrets]
+owasp_id: A05:2021
+cwe_id: CWE-200
+remediation: |
+  Block access to .env files in your web server config.
+  Nginx: add "location ~ /\.env { deny all; }" to server block.
+  Apache: add "<Files .env> Order allow,deny; Deny from all </Files>" to your config.
+
+request:
+  method: GET
+  paths:
+    - /.env
+    - /.env.local
+    - /.env.backup
+    - /.env.production
+    - /.env.dev
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - APP_KEY=
+    - DB_PASSWORD=
+    - SECRET_KEY=
+    - API_SECRET=
+    - DATABASE_URL=
+    - MAIL_PASSWORD=
+  not_words:
+    - "<html"
+    - "404 Not Found"

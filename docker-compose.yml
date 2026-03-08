@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  plasma:
+    build: .
+    image: plasma:v1
+    container_name: plasma
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./reports:/app/reports
+      - ./poc_output:/app/poc_output
+      - ./scans:/app/scans
+    # Override TARGET_URL at runtime:
+    #   TARGET_URL=https://target.example.com docker compose up plasma
+    command: ["--url", "${TARGET_URL:-https://example.com}", "--profile", "default"]
+
+  plasma-ui:
+    build: .
+    image: plasma:v1
+    container_name: plasma-ui
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./reports:/app/reports
+    entrypoint: ["python", "-m", "ui.server"]

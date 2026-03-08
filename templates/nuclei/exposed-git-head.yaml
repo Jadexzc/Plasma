@@ -1,0 +1,25 @@
+name: git-head-exposed
+description: Exposed .git/HEAD file confirms a git repository is accessible, enabling full source code download
+severity: high
+tags: [git, vcs, exposure, source-code]
+owasp_id: A05:2021
+cwe_id: CWE-538
+remediation: Block access to the .git directory entirely in your web server configuration.
+
+request:
+  method: GET
+  paths:
+    - /.git/HEAD
+    - /.git/COMMIT_EDITMSG
+    - /.git/index
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - "ref: refs/"
+    - "blob"
+    - "tree"
+    - "DIRC"
+  not_words:
+    - "<html"

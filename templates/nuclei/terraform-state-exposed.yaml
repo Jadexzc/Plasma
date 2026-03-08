@@ -1,0 +1,28 @@
+name: terraform-state-exposed
+description: Exposed Terraform state file contains cloud credentials, resource IDs, and infrastructure configuration
+severity: critical
+tags: [terraform, iac, credentials, cloud, exposure]
+owasp_id: A05:2021
+cwe_id: CWE-200
+remediation: Store Terraform state in encrypted remote backends (S3+DynamoDB, Terraform Cloud). Block web access to .terraform/ and .tfstate files.
+
+request:
+  method: GET
+  paths:
+    - /terraform.tfstate
+    - /terraform.tfstate.backup
+    - /.terraform/terraform.tfstate
+    - /infra/terraform.tfstate
+    - /deploy/terraform.tfstate
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - '"terraform_version"'
+    - '"resources"'
+    - '"aws_access_key"'
+    - '"serial":'
+  not_words:
+    - "<html"
+    - "404"

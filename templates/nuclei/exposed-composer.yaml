@@ -1,0 +1,28 @@
+name: composer-files-exposed
+description: Composer dependency files expose application dependencies, PHP version requirements, and repository paths
+severity: medium
+tags: [exposure, php, composer, dependencies]
+owasp_id: A05:2021
+cwe_id: CWE-200
+remediation: Block access to composer.json, composer.lock, and vendor/ directory via web server configuration.
+
+request:
+  method: GET
+  paths:
+    - /composer.json
+    - /composer.lock
+    - /package.json
+    - /package-lock.json
+    - /yarn.lock
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - '"require"'
+    - '"dependencies"'
+    - '"devDependencies"'
+    - '"version"'
+  not_words:
+    - "<html"
+    - "404"

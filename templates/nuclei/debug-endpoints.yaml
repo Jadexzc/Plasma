@@ -1,0 +1,37 @@
+name: debug-endpoints-exposed
+description: Debug, diagnostic, or development endpoints are publicly accessible in a production environment
+severity: high
+tags: [debug, exposure, development, disclosure]
+owasp_id: A05:2021
+cwe_id: CWE-489
+remediation: Disable all debug endpoints and diagnostic pages before deploying to production. Use environment flags to control exposure.
+
+request:
+  method: GET
+  paths:
+    - /debug
+    - /_debug
+    - /debug/default/view
+    - /__debug__/
+    - /debug/pprof/
+    - /metrics
+    - /health
+    - /actuator
+    - /actuator/env
+    - /actuator/mappings
+    - /_ah/admin
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - "debug"
+    - "stack trace"
+    - "exception"
+    - "SECRET_KEY"
+    - "DB_HOST"
+    - "heap"
+    - "goroutine"
+  not_words:
+    - "<html><head>"
+    - "404"

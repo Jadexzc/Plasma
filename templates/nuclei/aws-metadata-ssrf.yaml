@@ -1,0 +1,25 @@
+name: aws-metadata-accessible
+description: AWS EC2 instance metadata service is accessible, potentially exposing IAM credentials
+severity: critical
+tags: [aws, cloud, ssrf, metadata, credentials]
+owasp_id: A10:2021
+cwe_id: CWE-918
+remediation: Enable IMDSv2 only (enforce session-based metadata access). Block outbound requests to 169.254.169.254 from application contexts.
+
+request:
+  method: GET
+  paths:
+    - /latest/meta-data/
+    - /latest/meta-data/iam/security-credentials/
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - "ami-id"
+    - "instance-id"
+    - "iam"
+    - "AccessKeyId"
+    - "SecretAccessKey"
+  not_words:
+    - "<html"

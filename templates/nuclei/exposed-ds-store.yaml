@@ -1,0 +1,20 @@
+name: ds-store-exposed
+description: Exposed .DS_Store file from macOS reveals directory structure including sensitive file paths
+severity: low
+tags: [exposure, macos, directory-listing]
+owasp_id: A05:2021
+cwe_id: CWE-200
+remediation: Add .DS_Store to .gitignore. Configure web server to deny access to dotfiles.
+
+request:
+  method: GET
+  paths:
+    - /.DS_Store
+
+match:
+  status: [200]
+  regex:
+    - "\\x00\\x00\\x00\\x01Bud1"
+  not_words:
+    - "<html"
+    - "404"

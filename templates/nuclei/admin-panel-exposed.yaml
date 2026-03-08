@@ -1,0 +1,35 @@
+name: admin-panel-exposed
+description: Administrative panel is accessible without authentication or shows a default login page
+severity: high
+tags: [admin, exposure, default, authentication]
+owasp_id: A07:2021
+cwe_id: CWE-287
+remediation: Restrict admin panels to internal networks or require VPN access. Enable strong authentication and remove default credentials.
+
+request:
+  method: GET
+  paths:
+    - /admin
+    - /admin/
+    - /admin/login
+    - /administrator
+    - /administrator/
+    - /wp-admin/
+    - /manager/html
+    - /phpmyadmin/
+    - /cpanel
+    - /plesk
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - "admin"
+    - "password"
+    - "Username"
+    - "Sign in"
+    - "Dashboard"
+    - "Control Panel"
+  not_words:
+    - "404"
+    - "Forbidden"

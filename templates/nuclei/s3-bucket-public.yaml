@@ -1,0 +1,23 @@
+name: s3-bucket-public-listing
+description: AWS S3 bucket allows public listing, exposing stored files and their paths
+severity: high
+tags: [aws, s3, cloud, exposure]
+owasp_id: A05:2021
+cwe_id: CWE-200
+remediation: Set bucket ACL to private. Enable Block Public Access settings in S3. Audit bucket policies to remove public list permissions.
+
+request:
+  method: GET
+  paths:
+    - /?list-type=2
+    - /?delimiter=%2F
+
+match:
+  status: [200]
+  words:
+    - "ListBucketResult"
+    - "<Key>"
+    - "AmazonS3"
+  not_words:
+    - "Access Denied"
+    - "<html"

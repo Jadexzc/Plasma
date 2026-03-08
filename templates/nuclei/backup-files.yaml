@@ -1,0 +1,29 @@
+name: backup-files-exposed
+description: Backup archives or database dumps are publicly accessible and may contain sensitive source code or data
+severity: high
+tags: [exposure, backup, archive]
+owasp_id: A05:2021
+cwe_id: CWE-200
+remediation: Remove backup files from the webroot. Store backups in a location not accessible by the web server.
+
+request:
+  method: GET
+  paths:
+    - /backup.zip
+    - /backup.tar.gz
+    - /backup.sql
+    - /db.sql
+    - /database.sql
+    - /dump.sql
+    - /site.zip
+    - /www.zip
+    - /app.zip
+
+match:
+  status: [200]
+  condition: or
+  regex:
+    - "(?i)(PK\x03\x04|SQLite|-- MySQL dump|-- Dumping|CREATE TABLE|INSERT INTO)"
+  not_words:
+    - "<html"
+    - "404"

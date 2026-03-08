@@ -1,0 +1,27 @@
+name: graphql-introspection-enabled
+description: GraphQL introspection is enabled in production, revealing the full API schema to attackers
+severity: medium
+tags: [graphql, api, disclosure, information]
+owasp_id: A05:2021
+cwe_id: CWE-200
+remediation: Disable introspection queries in production GraphQL APIs. Use query depth and complexity limits.
+
+request:
+  method: POST
+  paths:
+    - /graphql
+    - /api/graphql
+    - /graphql/api
+  headers:
+    Content-Type: application/json
+  body: '{"query":"{ __schema { queryType { name } } }"}'
+
+match:
+  status: [200]
+  words:
+    - "__schema"
+    - "queryType"
+  not_words:
+    - "errors"
+    - "introspection is disabled"
+    - "400"

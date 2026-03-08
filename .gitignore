@@ -1,0 +1,69 @@
+# WebGuard — .gitignore
+# ─────────────────────
+
+# ── Python bytecode ────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pycache
+
+# ── Virtual environments ────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+.env/
+ENV/
+
+# ── Secrets & environment files ────────────────────────────────────────────
+.env
+.env.*
+!.env.example           # keep the example template
+*.key
+*.pem
+*.secret
+
+# ── Scan artefacts (generated at runtime) ──────────────────────────────────
+scans/
+poc_output/
+reports/
+screenshots/
+logs/
+*.log
+
+# ── Test artefacts ──────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+coverage.xml
+
+# ── IDEs ────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── macOS / Windows system files ────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Build / packaging ───────────────────────────────────────────────────────
+dist/
+build/
+*.egg-info/
+*.egg
+MANIFEST
+
+# ── Session & auth files ────────────────────────────────────────────────────
+.wg_session.json
+
+# ── Wordlists (large; distribute separately) ────────────────────────────────
+wordlists/*.txt
+!wordlists/.gitkeep
+
+# ── Node / misc ─────────────────────────────────────────────────────────────
+node_modules/
+.npm/

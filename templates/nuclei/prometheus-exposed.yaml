@@ -1,0 +1,28 @@
+name: prometheus-metrics-exposed
+description: Prometheus metrics endpoint is publicly accessible, revealing internal service names, counters, and performance data
+severity: medium
+tags: [prometheus, monitoring, metrics, disclosure]
+owasp_id: A05:2021
+cwe_id: CWE-200
+remediation: Restrict /metrics endpoint to internal networks or authenticated users. Use reverse proxy to block external access.
+
+request:
+  method: GET
+  paths:
+    - /metrics
+    - /prometheus/metrics
+    - /-/healthy
+    - /-/ready
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - "# HELP"
+    - "# TYPE"
+    - "go_gc_duration_seconds"
+    - "http_requests_total"
+    - "process_cpu_seconds_total"
+  not_words:
+    - "<html"
+    - "404"

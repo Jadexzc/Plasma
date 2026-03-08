@@ -1,0 +1,29 @@
+name: docker-config-exposed
+description: Exposed Docker or container configuration file reveals infrastructure details, image names, or credentials
+severity: high
+tags: [exposure, docker, container, config]
+owasp_id: A05:2021
+cwe_id: CWE-200
+remediation: Remove Docker config files from the webroot. Do not store container configs in publicly accessible directories.
+
+request:
+  method: GET
+  paths:
+    - /Dockerfile
+    - /docker-compose.yml
+    - /docker-compose.yaml
+    - /.dockerignore
+    - /docker-compose.override.yml
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - "FROM "
+    - "services:"
+    - "image:"
+    - "EXPOSE"
+    - "RUN "
+    - "volumes:"
+  not_words:
+    - "<html"

@@ -1,0 +1,29 @@
+name: laravel-debug-mode-enabled
+description: Laravel application is running with APP_DEBUG=true, exposing full stack traces, environment variables, and configuration
+severity: high
+tags: [laravel, php, debug, disclosure]
+owasp_id: A05:2021
+cwe_id: CWE-489
+remediation: |
+  Set APP_DEBUG=false in production .env.
+  Set APP_ENV=production. Never expose stack traces to end users.
+  Use proper exception handling and custom error pages.
+
+request:
+  method: GET
+  paths:
+    - /
+    - /index.php
+    - /_ignition/health-check
+
+match:
+  status: [200, 500]
+  condition: or
+  words:
+    - "Whoops! There was an error."
+    - "vendor/laravel/framework"
+    - "APP_KEY"
+    - "Ignition"
+    - "laravel/framework"
+  not_words:
+    - "APP_DEBUG=false"

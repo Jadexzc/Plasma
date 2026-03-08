@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "plasma"
+version = "1.0.0"
+description = "Web Application Security Testing Framework"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "requests>=2.31.0",
+    "urllib3>=2.0.0",
+    "flask>=3.0.0",
+    "flask-cors>=4.0.0",
+    "beautifulsoup4>=4.12.0",
+    "lxml>=4.9.0",
+    "markdown>=3.5.0",
+    "pyyaml>=6.0.1",
+    "aiohttp>=3.9.0",
+    "rich>=13.0.0",
+    "pyfiglet>=0.8.0",
+    "colorama>=0.4.6",
+]
+
+[project.optional-dependencies]
+browser  = ["playwright>=1.40.0"]
+http2    = ["httpx[http2]>=0.27.0"]
+ws       = ["websockets>=12.0"]
+dns      = ["dnspython>=2.6.0"]
+pdf      = ["weasyprint>=60.0"]
+dev      = ["pytest>=7.4.0", "pytest-asyncio>=0.21.0"]
+
+[project.scripts]
+plasma = "main:main"
+
+[tool.setuptools]
+py-modules = ["main", "config"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests*", "docs*", "reports*", "scans*", "poc_output*", "screenshots*"]

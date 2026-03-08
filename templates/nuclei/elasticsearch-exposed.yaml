@@ -1,0 +1,30 @@
+name: elasticsearch-exposed
+description: Elasticsearch node is accessible without authentication, exposing all indices and stored data
+severity: critical
+tags: [elasticsearch, database, nosql, exposure]
+owasp_id: A05:2021
+cwe_id: CWE-306
+remediation: |
+  Enable Elasticsearch security features (xpack.security.enabled=true).
+  Bind to localhost only. Use reverse proxy with authentication for external access.
+
+request:
+  method: GET
+  paths:
+    - /
+    - /_cat/indices
+    - /_nodes
+    - /_cluster/health
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - '"cluster_name"'
+    - '"tagline"'
+    - '"number_of_nodes"'
+    - '"You Know, for Search"'
+  not_words:
+    - "<html"
+    - "security_exception"
+    - "missing authentication"

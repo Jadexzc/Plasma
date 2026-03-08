@@ -1,0 +1,31 @@
+name: spring-actuator-exposed
+description: Spring Boot Actuator endpoints are exposed without authentication, revealing env vars, config, and heap dumps
+severity: critical
+tags: [spring, java, actuator, disclosure, credentials]
+owasp_id: A05:2021
+cwe_id: CWE-200
+remediation: Restrict /actuator endpoints with Spring Security. Expose only /health and /info in production.
+
+request:
+  method: GET
+  paths:
+    - /actuator
+    - /actuator/env
+    - /actuator/configprops
+    - /actuator/beans
+    - /actuator/mappings
+    - /actuator/heapdump
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - "_links"
+    - "activeProfiles"
+    - "systemEnvironment"
+    - "applicationConfig"
+    - "password"
+    - "datasource"
+  not_words:
+    - "404"
+    - "Unauthorized"

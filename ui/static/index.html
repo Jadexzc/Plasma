@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plasma V1 — Security Testing Framework</title>
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo-group">
+    <div class="logo-icon">
+      <svg width="18" height="18" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 2L4 8v10c0 7 5.4 13.5 12 15 6.6-1.5 12-8 12-15V8L16 2z" fill="url(#g1)"/>
+        <path d="M11 16.5l3.2 3.2 6.8-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="g1" x1="4" y1="2" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#c0392b"/>
+            <stop offset="100%" stop-color="#7b241c"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+    <span class="logo-name">Plasma</span>
+    <span class="logo-tagline">Security Testing Framework</span>
+  </div>
+  <div class="header-right">
+    <span class="version-chip">V1</span>
+    <span class="disclaimer-badge">
+      <ph-icon name="shield-warning" size="12" weight="fill"></ph-icon>
+      Authorized Testing Only
+    </span>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- ── Sidebar ─────────────────────────────────────────────────── -->
+  <aside class="sidebar">
+
+    <!-- Target -->
+    <div class="sidebar-section">
+      <div class="section-label">Target</div>
+      <div class="field">
+        <label class="field-label">URL</label>
+        <div class="input-with-icon">
+          <span class="input-icon"><ph-icon name="link-simple" size="13" weight="regular"></ph-icon></span>
+          <input id="target" type="url" placeholder="https://example.com" autocomplete="off" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Profile</label>
+          <select id="profile">
+            <option value="safe">Safe (passive)</option>
+            <option value="default" selected>Default</option>
+            <option value="aggressive">Aggressive</option>
+            <option value="stealth">Stealth</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">Depth</label>
+          <input id="depth" type="number" value="2" min="1" max="5" />
+        </div>
+        <div class="field">
+          <label class="field-label">Timeout</label>
+          <input id="timeout" type="number" value="10" min="5" max="60" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Detectors -->
+    <div class="sidebar-section">
+      <div class="section-label">Detectors</div>
+      <div id="detector-list"></div>
+    </div>
+
+    <!-- Scan Modes -->
+    <div class="sidebar-section">
+      <div class="section-label">Scan Modes</div>
+      <div class="option-group">
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="opt-browser">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">Browser / Playwright crawl</span>
+          </label>
+        </div>
+        <div class="option-sub" id="browser-sub" style="display:none">
+          <div class="field">
+            <label class="field-label">Parallel pages</label>
+            <input id="browser-parallel" type="number" value="3" min="1" max="10" />
+          </div>
+        </div>
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="opt-fuzz">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">Enable fuzzer</span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="opt-ws-fuzz">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">WebSocket fuzzing</span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="opt-api">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">API mode</span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="opt-bypass">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">Access control bypass</span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="opt-http2">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">HTTP/2 (via httpx)</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reconnaissance -->
+    <div class="sidebar-section">
+      <div class="section-label">Reconnaissance</div>
+      <div class="option-group">
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="opt-subdomains">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">Subdomain enumeration</span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="opt-takeover">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">Subdomain takeover check</span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="opt-params">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">Parameter discovery</span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="opt-tls">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">TLS/certificate analysis</span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="opt-cache">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">Cache poisoning test</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- HAR Input -->
+    <div class="sidebar-section">
+      <div class="section-label">HAR Import</div>
+      <div class="field">
+        <label class="field-label">Browser recording (.har)</label>
+        <div class="upload-row">
+          <input type="file" id="har-file-input" accept=".har" style="display:none">
+          <button class="btn-upload" id="btn-select-har" type="button">
+            <ph-icon name="file-code" size="13" weight="regular"></ph-icon> Select HAR
+          </button>
+          <span id="har-file-label" class="upload-file-label">No file selected</span>
+          <button class="btn-ghost-icon" id="btn-clear-har" title="Clear HAR" style="display:none">
+            <ph-icon name="x" size="11" weight="bold"></ph-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Authentication -->
+    <div class="sidebar-section">
+      <div class="section-label">Authentication</div>
+      <div class="field">
+        <label class="field-label">Auth cookie</label>
+        <input id="auth-cookie" type="text" placeholder="session=abc123; token=..." />
+      </div>
+      <div class="field">
+        <label class="field-label">OOB collaborator URL</label>
+        <input id="collaborator" type="text" placeholder="https://your.oob.server" />
+      </div>
+    </div>
+
+    <!-- Upload -->
+    <div class="sidebar-section">
+      <div class="section-label">File Upload Test</div>
+      <div class="field">
+        <div class="upload-row">
+          <input type="file" id="upload-file-input" style="display:none">
+          <button class="btn-upload" id="btn-select-file" type="button">
+            <ph-icon name="folder-open" size="13" weight="regular"></ph-icon> Select File
+          </button>
+          <span id="upload-file-label" class="upload-file-label">No file selected</span>
+          <button class="btn-ghost-icon" id="btn-clear-file" title="Clear file" style="display:none">
+            <ph-icon name="x" size="11" weight="bold"></ph-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Output -->
+    <div class="sidebar-section">
+      <div class="section-label">Output</div>
+      <div class="option-group">
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="gen-poc">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">Generate PoC files</span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="gen-report" checked>
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">Generate HTML report</span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="opt-jsonl">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">JSON Lines output</span>
+          </label>
+        </div>
+        <div class="option-row">
+          <label class="toggle-option">
+            <input type="checkbox" id="opt-save-scan">
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="toggle-label">Save scan for replay</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Run -->
+    <div class="sidebar-section">
+      <button class="btn-primary" id="btn-scan">
+        <ph-icon name="play" size="13" weight="bold"></ph-icon>
+        Run Scan
+      </button>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn-secondary" id="btn-pause">
+          <ph-icon name="pause" size="12" weight="bold"></ph-icon> Pause
+        </button>
+        <button class="btn-danger" id="btn-cancel">
+          <ph-icon name="stop" size="12" weight="bold"></ph-icon> Cancel
+        </button>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── Content ──────────────────────────────────────────────────── -->
+  <main class="content">
+
+    <!-- WAF banner -->
+    <div id="waf-banner">
+      <ph-icon name="shield-warning" size="14" weight="bold"></ph-icon>
+      <span id="waf-text">WAF detected</span>
+    </div>
+
+    <!-- Progress -->
+    <div id="scan-progress">
+      <div class="progress-header">
+        <span class="progress-title">Scan Progress</span>
+        <span class="progress-status" id="progress-text">Idle</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+      <div class="phase-steps">
+        <div class="phase-step" id="ps-crawl">
+          <div class="phase-dot"></div>
+          <span class="phase-label">Crawl</span>
+        </div>
+        <div class="phase-step" id="ps-recon">
+          <div class="phase-dot"></div>
+          <span class="phase-label">Recon</span>
+        </div>
+        <div class="phase-step" id="ps-analyse">
+          <div class="phase-dot"></div>
+          <span class="phase-label">Passive</span>
+        </div>
+        <div class="phase-step" id="ps-detect">
+          <div class="phase-dot"></div>
+          <span class="phase-label">Detect</span>
+        </div>
+        <div class="phase-step" id="ps-fuzz">
+          <div class="phase-dot"></div>
+          <span class="phase-label">Fuzz</span>
+        </div>
+        <div class="phase-step" id="ps-tls">
+          <div class="phase-dot"></div>
+          <span class="phase-label">TLS</span>
+        </div>
+        <div class="phase-step" id="ps-templates">
+          <div class="phase-dot"></div>
+          <span class="phase-label">Templates</span>
+        </div>
+        <div class="phase-step" id="ps-risk">
+          <div class="phase-dot"></div>
+          <span class="phase-label">Risk</span>
+        </div>
+        <div class="phase-step" id="ps-report">
+          <div class="phase-dot"></div>
+          <span class="phase-label">Report</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-grid">
+      <div class="summary-card card-critical">
+        <div class="count" id="cnt-critical">0</div>
+        <div class="label">Critical</div>
+      </div>
+      <div class="summary-card card-high">
+        <div class="count" id="cnt-high">0</div>
+        <div class="label">High</div>
+      </div>
+      <div class="summary-card card-medium">
+        <div class="count" id="cnt-medium">0</div>
+        <div class="label">Medium</div>
+      </div>
+      <div class="summary-card card-low">
+        <div class="count" id="cnt-low">0</div>
+        <div class="label">Low</div>
+      </div>
+    </div>
+
+    <!-- Findings -->
+    <div id="findings-panel">
+      <div class="panel-header">
+        <span class="panel-title">Findings</span>
+        <div class="panel-actions">
+          <button class="btn-secondary" id="btn-export-json">
+            <ph-icon name="download-simple" size="12" weight="bold"></ph-icon> Export
+          </button>
+        </div>
+      </div>
+      <table id="findings-table">
+        <thead>
+          <tr>
+            <th style="width:90px">Severity</th>
+            <th>Title</th>
+            <th style="width:130px">Detector</th>
+            <th>URL</th>
+          </tr>
+        </thead>
+        <tbody id="findings-body">
+          <tr><td colspan="4">
+            <div class="empty-state">No scan running. Configure a target and press Run Scan.</div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Log -->
+    <div id="log-panel">
+      <div class="panel-header">
+        <span class="panel-title">Scan Log</span>
+        <div class="panel-actions">
+          <button class="btn-ghost-icon" id="btn-clear-log" title="Clear log">
+            <ph-icon name="trash" size="13" weight="regular"></ph-icon>
+          </button>
+        </div>
+      </div>
+      <div id="log-output"><div class="log-line"><span class="log-ts">[00:00:00]</span> Plasma V1 ready.</div></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ── Finding Drawer ────────────────────────────────────────────── -->
+<div id="overlay"></div>
+<div id="drawer">
+  <div class="drawer-header">
+    <span class="drawer-title">Finding Detail</span>
+    <button class="btn-ghost-icon" id="drawer-close">
+      <ph-icon name="x" size="14" weight="bold"></ph-icon>
+    </button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

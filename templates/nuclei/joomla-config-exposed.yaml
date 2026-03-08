@@ -1,0 +1,24 @@
+name: joomla-config-exposed
+description: Joomla configuration.php is publicly readable and exposes database credentials
+severity: critical
+tags: [exposure, joomla, cms, credentials]
+owasp_id: A05:2021
+cwe_id: CWE-200
+remediation: Ensure configuration.php is not directly accessible. Set file permissions to 644 or less.
+
+request:
+  method: GET
+  paths:
+    - /configuration.php
+    - /configuration.php.bak
+    - /configuration.php~
+
+match:
+  status: [200]
+  words:
+    - "JConfig"
+    - "password"
+    - "public $db"
+  not_words:
+    - "<html"
+    - "404"

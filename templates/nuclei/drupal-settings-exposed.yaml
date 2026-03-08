@@ -1,0 +1,25 @@
+name: drupal-settings-exposed
+description: Drupal settings.php is publicly readable and may expose database credentials
+severity: critical
+tags: [exposure, drupal, cms, credentials]
+owasp_id: A05:2021
+cwe_id: CWE-200
+remediation: Configure your web server to block direct access to Drupal's settings.php file.
+
+request:
+  method: GET
+  paths:
+    - /sites/default/settings.php
+    - /sites/default/settings.local.php
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - "$databases"
+    - "database"
+    - "password"
+    - "drupal_hash_salt"
+  not_words:
+    - "<html"
+    - "Access denied"

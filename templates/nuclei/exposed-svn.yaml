@@ -1,0 +1,24 @@
+name: svn-repository-exposed
+description: Exposed Subversion .svn directory reveals source code structure and may allow file download
+severity: high
+tags: [svn, vcs, exposure, source-code]
+owasp_id: A05:2021
+cwe_id: CWE-538
+remediation: Block access to .svn directories in your web server configuration.
+
+request:
+  method: GET
+  paths:
+    - /.svn/entries
+    - /.svn/wc.db
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - "<?xml version"
+    - "svn:author"
+    - "SQLite"
+  not_words:
+    - "<html"
+    - "404"

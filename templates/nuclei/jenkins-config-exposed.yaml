@@ -1,0 +1,30 @@
+name: jenkins-exposed
+description: Jenkins CI/CD dashboard or configuration file is publicly accessible without authentication
+severity: high
+tags: [exposure, jenkins, ci-cd, admin]
+owasp_id: A05:2021
+cwe_id: CWE-287
+remediation: Require authentication for all Jenkins endpoints. Bind Jenkins to localhost only if not needed externally.
+
+request:
+  method: GET
+  paths:
+    - /jenkins
+    - /jenkins/
+    - /jenkins/login
+    - /jenkins/api/json
+    - /config.xml
+    - /credentials.xml
+
+match:
+  status: [200]
+  condition: or
+  words:
+    - "Jenkins"
+    - "hudson"
+    - "<id>jenkins</id>"
+    - "Manage Jenkins"
+    - "Build History"
+  not_words:
+    - "403"
+    - "Authentication required"

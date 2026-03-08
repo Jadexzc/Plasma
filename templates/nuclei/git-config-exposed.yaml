@@ -1,0 +1,17 @@
+name: git-config-exposed
+description: Exposed .git/config reveals remote repository URL and credentials
+severity: high
+tags: [git, vcs, credentials]
+owasp_id: A05:2021
+cwe_id: CWE-538
+
+request:
+  method: GET
+  path: /.git/config
+
+match:
+  status: [200]
+  words:
+    - "[core]"
+
+remediation: Block access to .git directory in web server config (deny from all)

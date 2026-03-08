@@ -1,0 +1,41 @@
+# Plasma V1 — Python Dependencies
+# Install: pip install -r requirements.txt
+
+# Core HTTP
+requests>=2.31.0
+urllib3>=2.0.0
+
+# Web Framework (Dashboard)
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# HTML parsing (Crawler)
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Reporting
+markdown>=3.5.0
+weasyprint>=60.0       # PDF generation (optional)
+
+# YAML (Templates)
+pyyaml>=6.0.1
+
+# Headless Browser (optional)
+# playwright>=1.40.0   # Install separately: playwright install
+
+# Async utilities
+aiohttp>=3.9.0         # For async HTTP in v3 (optional enhancement)
+
+# CLI presentation
+rich>=13.0.0           # Coloured tables, panels, progress bars
+pyfiglet>=0.8.0        # ASCII art banner title
+colorama>=0.4.6        # Windows terminal colours (optional)
+
+# Development / Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+# ── API key placeholder ──────────────────────────────────────────────────────
+# If integrating external APIs (e.g. Shodan, VirusTotal), store keys in .env:
+# python-dotenv>=1.0.0
+# API_KEY = "YOUR_API_KEY_HERE"   # Replace YOUR_API_KEY_HERE with your actual key
